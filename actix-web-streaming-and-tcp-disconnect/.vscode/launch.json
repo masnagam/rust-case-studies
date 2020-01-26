@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'actix-web-streaming-and-tcp-disconnect'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=actix-web-streaming-and-tcp-disconnect",
+          "--package=actix-web-streaming-and-tcp-disconnect"
+        ],
+        "filter": {
+          "name": "actix-web-streaming-and-tcp-disconnect",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
