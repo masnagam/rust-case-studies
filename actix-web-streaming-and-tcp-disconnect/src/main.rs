@@ -16,6 +16,7 @@ async fn main() -> io::Result<()> {
                 .service(empty)
         })
         .bind("0.0.0.0:3000")?
+        .keep_alive(0)  // disable periodic keep-alive checks
         .workers(1)
         .run()
         .await
