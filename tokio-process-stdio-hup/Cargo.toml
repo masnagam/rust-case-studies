@@ -1,5 +1,5 @@
 [package]
-name = "rust-case-studies-tokio-process-hup"
+name = "tokio-process-stdio-hup"
 version = "0.1.0"
 authors = ["Masayuki Nagamachi <masnagam@gmail.com>"]
 edition = "2018"

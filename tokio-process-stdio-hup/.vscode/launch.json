@@ -4,15 +4,15 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug executable 'rust-case-studies-tokio-process-hup'",
+      "name": "Debug executable 'tokio-process-stdio-hup'",
       "cargo": {
         "args": [
           "build",
-          "--bin=rust-case-studies-tokio-process-hup",
-          "--package=rust-case-studies-tokio-process-hup"
+          "--bin=tokio-process-stdio-hup",
+          "--package=tokio-process-stdio-hup"
         ],
         "filter": {
-          "name": "rust-case-studies-tokio-process-hup",
+          "name": "tokio-process-stdio-hup",
           "kind": "bin"
         }
       },
