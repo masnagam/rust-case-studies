@@ -3,6 +3,36 @@
 `actix-web` cannot detect TCP disconnect while streaming is pending
 ([Issue#1313](https://github.com/actix/actix-web/issues/1313)).
 
+## Conclusion
+
+I concluded that it's difficult to detect client disconnects while streams are
+pending.
+
+tokio's TcpStream seems to be based on Rust's TcpStream which has a traditional
+socket interface.  TcpStream's read/write function call with an empty buffer
+returns `Ok(0)`.  So, it's impossible to distinguish between client disconnect
+and success.
+
+[Issue#29](https://github.com/tokio-rs/tokio/issues/29) in the tokio project is
+a similar topic.
+
+I checked behavior of [tokio::io::PollEvented::poll_write_ready()] on Linux.  I
+analyzed my test program by using VS Code debugger and found that this function
+doesn't detect client disconnect.  [tokio::net::TcpStream::poll_write_priv()]
+reached `mio::net::TcpStream::write()` which detected the client disconnect.
+
+Read/Write with non-empty buffer can detect the client disconnect.  But that
+breaks the HTTP request pipelining and the HTTP response.
+
+There might be a platform specific workaround, but there is no useful functions
+in crates that actix-web uses at this moment.
+
+Finally, I decided to feed some data at short intervals from my stream
+implementation in order to detect client disconnect quickly.
+
+[tokio::io::PollEvented::poll_write_ready()]: https://github.com/tokio-rs/tokio/blob/master/tokio/src/io/poll_evented.rs#L302
+[tokio::net::TcpStream::poll_write_priv()]: https://github.com/tokio-rs/tokio/blob/master/tokio/src/net/tcp/stream.rs#L668
+
 ## Reproduction Environments
 
 * macOS Catalina 10.15.2

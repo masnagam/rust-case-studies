@@ -14,6 +14,7 @@ async fn main() -> io::Result<()> {
                 .service(pending)
                 .service(alternate)
                 .service(empty)
+                .service(ready)
         })
         .bind("0.0.0.0:3000")?
         .keep_alive(0)  // disable periodic keep-alive checks
@@ -100,5 +101,29 @@ impl Stream for EmptyStream {
 impl Drop for EmptyStream {
     fn drop(&mut self) {
         eprintln!("EmptyStream: Dropped");
+    }
+}
+
+#[actix_web::get("/ready")]
+async fn ready() -> io::Result<HttpResponse> {
+    Ok(HttpResponse::Ok().streaming(ReadyStream))
+}
+
+struct ReadyStream;
+
+impl Stream for ReadyStream {
+    type Item = io::Result<Bytes>;
+
+    fn poll_next(
+        self: Pin<&mut Self>,
+        _: &mut Context
+    ) -> Poll<Option<Self::Item>> {
+        Poll::Ready(Some(Ok(Bytes::from("0"))))
+    }
+}
+
+impl Drop for ReadyStream {
+    fn drop(&mut self) {
+        eprintln!("ReadyStream: Dropped");
     }
 }
