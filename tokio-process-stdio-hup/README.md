@@ -7,8 +7,20 @@ This issue doesn't occur on macOS.  I haven't tested on Windows.
 
 ## Workaround
 
-This issue should be solved in `tokio` basically.  However, there are
-workarounds to avoid this issue by waking up the pending write in some way.  See
-[workaround.patch](./workaround.patch) in this folder for details.  It might be
-possible to apply a similar patch to `tokio::process::{ChildStdin, ChildStdout,
-ChildStderr}`.
+This issue should be solved in `tokio` basically, but I tried to find
+workarounds to avoid this issue by waking up the pending write in some way.
+
+* [workaround_oneshot.patch]
+* [workaround_sigchld.patch]
+
+These are NOT perfect solutions.
+
+[workaround_oneshot.patch] can solve this issue even if we can call
+`tx.send(())` explicitly at the correct timing.  That's impossible if we cannot
+predict the child process termination.
+
+[workaround_sigchld.patch] can solve this issue in the test program, but cannot
+solve when there are multiple child processes.
+
+[workaround_oneshot.patch]: ./workaround_oneshot.patch
+[workaround_sigchld.patch]: ./workaround_sigchld.patch

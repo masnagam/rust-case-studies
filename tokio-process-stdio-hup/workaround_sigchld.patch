@@ -1,5 +1,5 @@
 diff --git src/main.rs src/main.rs
-index ad09e35..ca425b5 100644
+index be2356b..4edf139 100644
 --- src/main.rs
 +++ src/main.rs
 @@ -6,6 +6,7 @@ use std::time::Duration;
@@ -8,7 +8,7 @@ index ad09e35..ca425b5 100644
  use tokio::process::Command;
 +use tokio::signal::unix as signal;
  
- #[tokio::main]
+ #[tokio::main(core_threads = 1)]
  async fn main() {
 @@ -22,6 +23,7 @@ async fn main() {
          inner: child.stdin.take().unwrap(),
@@ -18,7 +18,7 @@ index ad09e35..ca425b5 100644
      };
  
      // Spawn a task which writes large amounts of data to `input`.
-@@ -59,6 +61,7 @@ struct Wrapper<W> {
+@@ -56,6 +58,7 @@ struct Wrapper<W> {
      inner: W,
      writing: Arc<Mutex<bool>>,
      shutdown: Arc<Mutex<bool>>,
@@ -26,17 +26,18 @@ index ad09e35..ca425b5 100644
  }
  
  impl<W: AsyncWrite + Unpin> AsyncWrite for Wrapper<W> {
-@@ -69,7 +72,18 @@ impl<W: AsyncWrite + Unpin> AsyncWrite for Wrapper<W> {
+@@ -66,7 +69,19 @@ impl<W: AsyncWrite + Unpin> AsyncWrite for Wrapper<W> {
          buf: &[u8]
      ) -> Poll<io::Result<usize>> {
          let poll = Pin::new(&mut self.inner).poll_write(cx, buf);
 -        *self.writing.lock().unwrap() = poll.is_pending();
 +        if poll.is_pending() {
-+            // Call `poll_recv()` in order to wake up the pending write when a
-+            // child process terminated.  The pending write awakes even when
-+            // the owner child process doesn't terminate, but there are no
-+            // fatal adverse effects.
 +            *self.writing.lock().unwrap() = true;
++            // Call `poll_recv()` in order to wake up the pending write when a
++            // child process terminated.
++            //
++            // This patch works in this program, but doesn't work when there are
++            // multiple child processes...
 +            if Pin::new(&mut self.sigchld).poll_recv(cx).is_ready() {
 +                return Poll::Ready(Ok(0));
 +            }
