@@ -7,9 +7,9 @@ use std::time::Duration;
 use tokio::prelude::*;
 use tokio::process::Command;
 
-#[tokio::main]
+#[tokio::main(core_threads = 1)]
 async fn main() {
-    let mut child = Command::new("cat")
+    let mut child = Command::new("sh").args(&["-c", "exec 0<&-;"])
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .spawn()
@@ -38,9 +38,6 @@ async fn main() {
     // Wait 1 second so that the task is blocked at `input.write_all()`.
     tokio::time::delay_for(Duration::from_secs(1)).await;
 
-    // Kill the child process while the task is blocked at `input.write_all()`.
-    let result = child.kill();
-    assert!(result.is_ok());
     let _ = child.await;
 
     // Expected behavior
