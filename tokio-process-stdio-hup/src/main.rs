@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use tokio::prelude::*;
 use tokio::process::Command;
+use tokio::sync::oneshot;
 
 #[tokio::main(core_threads = 1)]
 async fn main() {
@@ -18,11 +19,13 @@ async fn main() {
 
     let writing = Arc::new(Mutex::new(false));
     let shutdown = Arc::new(Mutex::new(false));
+    let (tx, rx) = oneshot::channel();
 
     let mut input = Wrapper {
         inner: child.stdin.take().unwrap(),
         writing: writing.clone(),
         shutdown: shutdown.clone(),
+        sender: Some(tx),
     };
 
     // Spawn a task which writes large amounts of data to `input`.
@@ -36,8 +39,8 @@ async fn main() {
         }
     });
 
-    // Wait 1 second so that the task is blocked at `input.write_all()`.
-    tokio::time::delay_for(Duration::from_secs(1)).await;
+    // Wait until pending in `wrapper.write_all()`.
+    let _ = rx.await;
 
     child.kill().unwrap();
     let _ = child.await;
@@ -58,6 +61,7 @@ struct Wrapper<W> {
     inner: W,
     writing: Arc<Mutex<bool>>,
     shutdown: Arc<Mutex<bool>>,
+    sender: Option<oneshot::Sender<()>>,
 }
 
 impl<W: AsyncWrite + Unpin> AsyncWrite for Wrapper<W> {
@@ -69,6 +73,11 @@ impl<W: AsyncWrite + Unpin> AsyncWrite for Wrapper<W> {
     ) -> Poll<io::Result<usize>> {
         let poll = Pin::new(&mut self.inner).poll_write(cx, buf);
         *self.writing.lock().unwrap() = poll.is_pending();
+        if poll.is_pending() {
+            if let Some(sender) = self.sender.take() {
+                let _ = sender.send(());
+            }
+        }
         poll
     }
 
