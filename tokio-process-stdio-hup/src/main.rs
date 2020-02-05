@@ -9,7 +9,8 @@ use tokio::process::Command;
 
 #[tokio::main(core_threads = 1)]
 async fn main() {
-    let mut child = Command::new("sh").args(&["-c", "exec 0<&-;"])
+    let mut child = Command::new("sleep")
+        .arg("2")
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .spawn()
@@ -38,6 +39,7 @@ async fn main() {
     // Wait 1 second so that the task is blocked at `input.write_all()`.
     tokio::time::delay_for(Duration::from_secs(1)).await;
 
+    child.kill().unwrap();
     let _ = child.await;
 
     // Expected behavior
