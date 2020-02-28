@@ -5,6 +5,10 @@ tokio-rs/tokio for the current status.
 
 This issue doesn't occur on macOS.  I haven't tested on Windows.
 
+## Patch landed since v0.2.12
+
+This issue was solved by tokio/pull/2218 which landed in v0.2.12.
+
 ## Workaround
 
 This issue should be solved in `tokio` basically, but I tried to find

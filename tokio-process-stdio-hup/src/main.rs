@@ -2,7 +2,6 @@ use std::pin::Pin;
 use std::process::Stdio;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
-use std::time::Duration;
 
 use tokio::prelude::*;
 use tokio::process::Command;
