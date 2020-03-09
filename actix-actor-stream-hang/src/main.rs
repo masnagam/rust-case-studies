@@ -1,5 +1,7 @@
 use std::time::{Duration, Instant};
+
 use actix::prelude::*;
+use tokio;
 
 #[actix_rt::main]
 async fn main() {
@@ -49,8 +51,12 @@ impl StreamHandler<u8> for MyActor {
         if self.0.elapsed() > Duration::from_secs(5) {
             // The context cannot be paused with
             // `ctx.wait(actix::fut::ready(()))`.
-            ctx.wait(actix::fut::wrap_future(
-                actix::clock::delay_for(Duration::from_secs(0))));
+            //
+            // The following code also works fine:
+            //
+            // ctx.wait(actix::clock::delay_for(Duration::from_secs(0))
+            //          .into_actor(self));
+            ctx.wait(tokio::task::yield_now().into_actor(self));
         }
     }
 }

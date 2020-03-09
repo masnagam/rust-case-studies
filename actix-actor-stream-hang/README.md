@@ -21,5 +21,13 @@ A similar situation occurs in other types. For example:
 
 ## Workaround
 
-At this point, `ctx.wait(actix::fut::wrap_future(actix::clock::delay_for(Duration::from_secs(0))))`
-is one of ways to pause the context and yield control.
+At this point, using `ctx.wait(tokio::task::yield_now().into_actor(self))` is
+the best workaround solution.
+
+The following code also works fine:
+
+```rust
+ctx.wait(actix::clock::delay_for(Duration::from_secs(0)).into_actor(self));
+```
+
+but it's better to add a code comment to inform readers of your intent.
