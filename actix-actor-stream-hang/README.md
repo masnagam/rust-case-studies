@@ -1,5 +1,11 @@
 # actix-actor-stream-hang
 
+> actix/actix/issues/360
+
+This issue has been fixed by actix/actix/pull/363.
+
+## Description
+
 `ActorStream` blocks other tasks in the same thread until `ctx.waiting()`
 returns `true` or the `Stream` is pending.
 
