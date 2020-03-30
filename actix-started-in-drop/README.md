@@ -1,5 +1,7 @@
 # actix-started-in-drop
 
+> actix/actix/issues/372
+
 ## Description
 
 `Actor::started()` may be called in the finalization.  In this case, using the
