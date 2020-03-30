@@ -1,0 +1,7 @@
+{
+  "git.ignoreLimitWarning": true,
+  "lldb.verboseLogging": true,
+  "search.exclude": {
+    "**/target": true
+  }
+}
