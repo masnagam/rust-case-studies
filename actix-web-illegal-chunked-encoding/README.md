@@ -63,3 +63,11 @@ chunked-encoding even though the HTTP version of the response is 1.1.
 1. Open this folder with VS Code Remote Containers
 2. Press F5 to launch a test server
 3. Run the same `curl` command on the `bash` terminal on VSCode
+
+## Workaround
+
+There is no workaround at this point.
+
+As you can see in src/main.rs, this issue cannot be solved by using a middleware
+which removes the `Upgrade` header.  Because `actix-http` processes the
+`Upgrade` header before the middleware processes it.

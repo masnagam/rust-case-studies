@@ -264,6 +264,7 @@ name = "actix-web-illegal-chunked-encoding"
 version = "0.1.0"
 dependencies = [
  "actix-rt",
+ "actix-service",
  "actix-web",
  "futures",
  "tokio",
