@@ -66,7 +66,14 @@ chunked-encoding even though the HTTP version of the response is 1.1.
 
 ## Workaround
 
-There is no workaround at this point.
+Add the following lines in your `Cargo.toml`:
+
+```toml
+[patch.crates-io]
+actix-http = { git = "https://github.com/masnagam/actix-web", branch = "fix-1611" }
+```
+
+This will replace the original actix-http with one in masnagam/actix-web.
 
 As you can see in src/main.rs, this issue cannot be solved by using a middleware
 which removes the `Upgrade` header.  Because `actix-http` processes the
