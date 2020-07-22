@@ -1,8 +1,14 @@
 # actix-web illegal chunked-encoding issue
 
+> actix/actix-web#1611
+
 When `actix-web` receives an HTTP request with `Upgrade: h2c` header for a
 resource which will be encoded with the chunked-encoding, it responds an illegal
 chunked-encoding response.
+
+This issue has been fixed by actix/actix-web#1615, but it's for actix-web 3.x.
+The PR won't be applied to actix-web 2.x.  Use the workaround below if you like
+to use actix-web 2.x.
 
 ## Reproduction Environments
 
