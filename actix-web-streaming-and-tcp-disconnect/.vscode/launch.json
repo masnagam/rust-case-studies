@@ -4,20 +4,19 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug executable 'actix-web-streaming-and-tcp-disconnect'",
+      "name": "Debug executable",
       "cargo": {
         "args": [
           "build",
           "--bin=actix-web-streaming-and-tcp-disconnect",
-          "--package=actix-web-streaming-and-tcp-disconnect"
+          "--package=actix-web-streaming-and-tcp-disconnect",
+          "--manifest-path=Cargo.toml"
         ],
         "filter": {
-          "name": "actix-web-streaming-and-tcp-disconnect",
           "kind": "bin"
         }
       },
-      "args": [],
-      "cwd": "${workspaceFolder}"
+      "args": []
     }
   ]
 }

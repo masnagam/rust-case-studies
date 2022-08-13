@@ -35,11 +35,9 @@ implementation in order to detect client disconnect quickly.
 
 ## Reproduction Environments
 
-* macOS Catalina 10.15.2
-  * Rust 1.40.0
-* Linux (Docker Container)
-  * [rust:1.40.0](https://hub.docker.com/_/rust)
-* actix-web v2.0.0
+* Linux
+* Rust 1.61.0
+* actix-web v4.1.0
 
 ### REST API
 
@@ -52,8 +50,6 @@ implementation in order to detect client disconnect quickly.
 
 ## Reproduction Steps
 
-### macOS
-
 Build and run:
 
 ```console
@@ -63,7 +59,6 @@ cargo run
 Open another terminal and run:
 
 ```
-brew install coreutils
 timeout 3 curl http://localhost:3000/pending
 ```
 
@@ -73,10 +68,13 @@ We never see the following message from `cargo run`:
 PendingStream: Dropped
 ```
 
-### Linux (VS Code Remote Containers)
+### Using Visual Studio Code Remote - Containers
 
 Open this folder with VS Code Remote Containers.  And then press F5 to launch a
 test server.
+
+There is no port forwarding setting in the `devcontainer.json`.  So, you have to
+run the `curl` command on a terminal inside Visual Studio Code.
 
 ## Possible candidate of causes
 
