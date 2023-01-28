@@ -35,3 +35,11 @@ On the other hand, `tracing_subscriber::EnvFilter` doesn't trim white spaces:
 
 * https://github.com/tokio-rs/tracing/blob/264a417b4b13728e7f46383b838668389ea8967e/tracing-subscriber/src/filter/env/builder.rs#L139-L141
 * https://github.com/tokio-rs/tracing/blob/264a417b4b13728e7f46383b838668389ea8967e/tracing-subscriber/src/filter/env/builder.rs#L159-L161
+
+## Patch
+
+The following change passed tests executed by `cargo test -p tracing-subscriber
+--all-features` including a test I added.  However, I have not tested other
+complex cases including regex.
+
+* https://github.com/masnagam/tracing/commit/f0cd348e1eada953a790c8a7019ff5387ca04b03
